@@ -28,11 +28,15 @@ class fWordsMainWindow(QWidget):
         btnLabel = QVBoxLayout()
         uppervocaLayout.addLayout(btnLabel)
 
+        self.previousLabel = QLabel()
+        self.previousLabel.setMinimumWidth(200)
         self.checkLine = QLineEdit()
         self.checkLine.returnPressed.connect(self.check_the_word)
         self.checkBtn = QPushButton('Check')
         self.checkBtn.clicked.connect(self.check_the_word)
         vocabottomLabel = QHBoxLayout()
+        vocabottomLabel.addStretch()
+        vocabottomLabel.addWidget(self.previousLabel)
         vocabottomLabel.addWidget(self.checkLine)
         vocabottomLabel.addWidget(self.checkBtn)
 
@@ -105,6 +109,7 @@ class fWordsMainWindow(QWidget):
         self.mainLayout.addWidget(self.showPicBtn)
         self.setLayout(self.mainLayout)
 
+        self.refresh_status()
         self.show()
 
     def refresh_status(self):
@@ -159,6 +164,8 @@ class fWordsMainWindow(QWidget):
             self.get_word()
 
     def get_word(self):
+        if self.the_word:
+            self.previousLabel.setText('previous : <b><i>{}</i></b>'.format(self.the_word))
         self.the_word = self.myDictDB.get_a_word()
         if self.the_word:
             self.voLabel.clear()

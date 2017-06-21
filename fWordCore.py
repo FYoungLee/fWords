@@ -10,9 +10,9 @@ class WordOBJ:
     def __init__(self):
         self.enDict = {}
         self.progress = []
-        self.myStatus = {}
-        self.init_status()
         self.loadDB()
+        self.myStatus = {'skilled': 0, 'in_progress': 0, 'unknown': 0}
+        self.init_status()
         self.today_list = {}
 
     def loadDB(self):
@@ -25,7 +25,16 @@ class WordOBJ:
         else:
             with open('myProgress.json') as f:
                 self.progress = json.loads(f.read())
-                self.make_progress()
+
+    def init_status(self):
+        for each in self.progress:
+            if each['exp'] == -1:
+                self.myStatus['skilled'] += 1
+            elif each['exp'] > 0:
+                self.myStatus['in_progress'] += 1
+            elif each['exp'] == 0:
+                break
+        self.myStatus['unknown'] = len(self.progress) - self.myStatus['skilled'] - self.myStatus['in_progress']
 
     @staticmethod
     def make_progress():
@@ -103,18 +112,6 @@ class WordOBJ:
             return True
         else:
             return datetime.datetime.now().timestamp() >= WordOBJ._word_review_date(word)
-
-    def init_status(self):
-        self.myStatus['skilled'] = 0
-        self.myStatus['in_progress'] = 0
-        for each in self.progress:
-            if each['exp'] == -1:
-                self.myStatus['skilled'] += 1
-            elif each['exp'] > 0:
-                self.myStatus['in_progress'] += 1
-            elif each['exp'] == 0:
-                break
-        self.myStatus['unknown'] = len(self.progress) - self.myStatus['skilled'] - self.myStatus['in_progress']
 
     def create_today_list(self, day_max):
         for each in self.progress:
